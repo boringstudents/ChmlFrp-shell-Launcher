@@ -52,7 +52,7 @@ jobs:
         run: |
           currentDate=$(date +%Y_%m_%d)
           zipFileName="CUL-CLI_Linux_${currentDate}.zip"
-          7z a -tzip -mx=9 -mmt=on -mfb=273 -mpass=15 "${zipFileName}" "./build_output/paste.bin"
+          7z a -tzip -mx=9 -mmt=on -mfb=273 -mpass=15 "${zipFileName}" "./build_output/csl.bin"
           echo "Created high-compression ZIP archive: ${zipFileName}"
 
       - name: Upload artifact
