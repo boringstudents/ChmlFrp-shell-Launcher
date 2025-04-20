@@ -1,1 +1,63 @@
 
+name: Build Linux Executable
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3-dev ccache
+          sudo apt-get install -y patchelf
+          sudo apt-get install -y p7zip-full
+          
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install nuitka
+          pip install zstandard
+          pip install ordered-set
+          pip install -r requirements.txt
+
+      - name: Build executable with Nuitka
+        run: |
+          python -m nuitka --onefile --python-flag=-O \
+          --enable-plugin=upx \
+          --include-package=requests \
+          --include-package=urllib3 \
+          --include-package=psutil \
+          --assume-yes-for-downloads \
+          --output-dir=./build_output \
+          ./csl.py  # Change this to your actual script name
+
+      - name: Compress with maximum compression
+        run: |
+          currentDate=$(date +%Y_%m_%d)
+          zipFileName="CUL-CLI_Linux_${currentDate}.zip"
+          7z a -tzip -mx=9 -mmt=on -mfb=273 -mpass=15 "${zipFileName}" "./build_output/paste.bin"
+          echo "Created high-compression ZIP archive: ${zipFileName}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CUL-CLI-Linux
+          path: ./*.zip
+          retention-days: 7
