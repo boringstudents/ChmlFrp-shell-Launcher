@@ -38,19 +38,13 @@ jobs:
           python -m nuitka --onefile --python-flag=-O `
           --plugin-enable=upx `
           --upx-binary=auto `
-          --company-name=ChmlFrp `
-          --product-name=CUL-CLI `
-          --file-version=1.6.7 `
-          --product-version=1.6.7 `
-          --file-description="ChmlFrp CLI Client" `
-          --copyright="ChmlFrp" `
           --include-package=requests `
           --include-package=urllib3 `
           --include-package=psutil `
           --windows-console-mode=force `
           --assume-yes-for-downloads `
           --output-dir=./build_output `
-          ./paste.py  # Change this to your actual script name
+          ./csl.py  # Change this to your actual script name
 
       - name: Compress with maximum ZIP compression (7-Zip)
         run: |
